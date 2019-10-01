@@ -19,7 +19,6 @@ const sideDrawer = (props)=> {
            <nav><NavigationItems></NavigationItems></nav>
       </div>  
     </Aux>
-       
     )
 }
 export default sideDrawer;
