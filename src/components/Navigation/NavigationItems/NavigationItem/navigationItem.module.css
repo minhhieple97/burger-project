@@ -18,6 +18,7 @@
     color: #40A4C8;
 } 
 @media (min-width:500px){
+    /* Viết css cho giao diện mobile */
     .NavigationItem {
         margin: 0;
         display: flex;
