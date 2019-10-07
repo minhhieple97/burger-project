@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Aux from '../../hoc/Wraper';
 import classes from './layout.module.css';
-import Toolbar from '../Navigation/Toolbar/Toolbar';
-import SideDrawer from '../Navigation/SideDrawer/SideDrawer';
+import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
+import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 class Layout extends Component {
     state = {
         showSideDrawer: false//tùy chọn hiển thị cho side-drawer và backdrop , tức là sự hiện thị của SideDrwaer và Backdrop là đồng thời và phụ thuộc và duy nhất state showSideDrwaer
