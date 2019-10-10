@@ -17,7 +17,7 @@ Cấu trúc dự án Burder project
 
 *Chi tiết 
 Thư mục components
-+ BuildControl : Xây dựng nên phần Foooter,các button dùng để add thêm các thành phần của burger.
++ BuildControl : Xây dựng nên phần Foooter,các button dùng để add thêm các thành phần của chiếc bánh burger ở giữa màn hình.
 + Burger : Tạo nên các thành phần của Burger (mead,chesse...)
 + Layout : Component bao bọc tất cả component trong ứng dụng
 + Logo : Component chứa logo để ở phần trên
@@ -72,7 +72,7 @@ có payload và type.
 + Sau khi xử lý xong data đầu vào reducers sẽ tiến hành đồng bộ với dữ liệu trên store, 
 + Chú ý rằng mỗi lần reducers nhận được form và old data => thì nó đều trả về một dữ liệu mới, không liên quan gì đến old data => suy ra một điều rằng qua mỗi lần nhận được Action thì state trả về từ các reducers đều mới hoàn toàn, không liên quan gì đến state cũ, chúng ta luôn tránh so sánh trực tiếp old data vs new data trong reducers
 + Không nên khởi tạo giá trị ban đầu cho các state là undefine.
-+ Chỉ có thể thay đổi state bằng cách tạo ra một action và truy cập trực tiếp vào state trong Reducers đó là luật cần tuân thủ nghiêm ngặt.
++ Chỉ có thể thay đổi state bằng cách tạo ra một action và truy cập trực tiếp (thay đổi) state trong Reducers đó là luật cần tuân thủ nghiêm ngặt (RULE 1)
 
 ======================================================
 * Mô tả luồng hoạt động của Redux
@@ -139,3 +139,23 @@ const store = createStore(ourDepartments);//Tạo store để  quản lý các s
 const action = createPolicy('Alex',20);//Tạo một action
 store.dispatch(action);//Sử dụng hàm dispatch của Store để phân phối các action đến tất cả các Reducers
 store.getState()//trả về dữ liệu trong store.
+
+================Sử dụng redux-thunk==========================
+- Ban đầu tiếp cận có thể tưởng tượng redux-thunk như một middleware
+- sử dụng redux-thunk để thực hiện một số  HTTP-request (async) bên trong ứng dụng sử dụng redux.
+=> Redux-thunk sinh ra để giúp chúng ta đối phó với các action createor async nhưng nó cũng giúp chúng ta làm nhiều việc khác nữa.
+- Tại sao phải sử dụng redux-thunk, trong redux có RULE :
+REASON_1  + Mọi Action đều phải trả về một object có type hoặc payload.
+Khi sử dụng acion để thực hiện có HTTP-request (async) đi kèm với awai (sử dụng async awai trong action function) về cơ bản đây cú phép ES6 => khi trình duyệt chạy hàm async nó sẽ biên dịch hàm sang một kiểu mới (tức là những gì thực sự chạy trong trình duyệt không phải là thứ mà bạn nghĩ) => lúc này hàm không còn trả về một object nữa => phải sử dụng redux thunk 
+REASON_2  + Kể cả khi không sử dụng async và awai mà sử dụng promise cũng sẽ phát sinh vấn đề
+luồng hoạt động cơ bản của redux rằng khi một action được gọi , dispatch sẽ gửi sao chép và gửi  các action này đến tất cả các reducers (điều này diễn ra rất nhanh - sync)), khi thực hiện các HTTP-request bản chất là async..khi chúng ta chưa nhận được reponse thì dispatch đã gửi action đi cho các reducers rồi.
+
+SyncActionCreateor (khi action được call thì lập tức dispatch sẽ gửi nó cho các reducers) vs AsyncActionCreator (waiting trước khi dispatch gửi cho các reducers) sử dụng khi thực hiện các hành động bất đồng bộ.
+
+=> Hiểu đơn giản redux-thunk như một middleware và nó can thiệp vào luồng hoạt động của redux,
+middleware(thunk) nằm giữa dispatch và reducers, 
++ Đơn giản thì middleware này là một function sẽ được gọi trước thời điểm mà dispatch gửi cho action reducers, trong function đó middeleware có khả năng ngăn chặn việc dispatch gửi action cho reducers ngay lập tức.
++ Có rất nhiều middleware có khả năng làm điều này nhưng redux-thunk có nhiều ưu việt nhất
+=> Luật của redux
++ Action bắt buộc phải trả về một object (trong object bắt buộc phải có prop type có thể có hoặc không có props payload)
+=> Sự khác biệt lớn nhất nằm ở chỗ redux-thunk cho phép action trả về một hàm
