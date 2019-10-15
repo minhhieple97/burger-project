@@ -1,5 +1,6 @@
 import React from 'react';
 import classes from './burger.module.css';
+import {withRouter} from 'react-router-dom';//Sử dụng withRouter như một HOC được cung cấp bởi react-router-dom giúp các childComponent được injection props của react-router-dom như history, params..
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 const burger = (props)=>{
   let transformmedIngredients = Object.keys(props.ingredients)
@@ -22,4 +23,4 @@ const burger = (props)=>{
       <BurgerIngredient type="bread-bottom"></BurgerIngredient>
     </div>
 }
-export default burger;
+export default withRouter(burger);

@@ -23,10 +23,12 @@ class Layout extends Component {
         return (
             <Aux>
                 <Toolbar drawerToggleClicked={this.sideDrawerToggleHandler} />
+                {/* Toolbar là thanh naviagtion component hiển thị  ở màn hình desktop */}
                 <SideDrawer
                     open={this.state.showSideDrawer}
                     closed={this.sideDrawerClosedHandler} 
                 />
+                {/* SideDrawer là thanh naviagtion component hiểu thị ở màn hình mobile */}
                 <main className={classes.Content}>
                     {this.props.children}
                 </main>
