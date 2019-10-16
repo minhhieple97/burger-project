@@ -17,7 +17,7 @@ export default function withErrorHandler(WrapperComponent,axios) {
             });
         };
         componentWillUnmount() {
-            //Vấn đề phát sinh khi tái sử dụng nhiều lần với withErrorHandler sẽ tạo ra càng này càng nhiều các interceptors gây lãng phí bộ nhớ memory-leak (bởi vì chúng ta khởi tạo các interceptors trong lifecycle componentWillMount)
+            //Vấn đề phát sinh khi tái sử dụng nhiều lần với withErrorHandler sẽ tạo ra càng này càng nhiều các interceptors (hiểu đơn giản nó như những middleware) gây lãng phí bộ nhớ memory-leak (bởi vì chúng ta khởi tạo các interceptors trong lifecycle componentWillMount)
             //=> Giải pháp mỗi khi component  unmount thì sẽ xóa interceptors  instanceAxios của componentChild của nó đi.
             axios.interceptors.request.eject(this.reqInterceptor);//Hủy các interceptors này khi component bị unmount
             axios.interceptors.response.eject(this.resInterceptor);

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {withRouter} from 'react-router-dom';
 import Button from '../../../components/UI/Button/Button';
 import axios from '../../../axios-orders';
 import classes from './contactData.module.css';
@@ -12,14 +11,15 @@ class ContactData extends Component {
             street: '',
             postalCode: ''
         },
+
         loading: false
     }
     orderHandler = async (e) => {
         e.preventDefault();
         this.setState({ loading: true });
         const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
+            ingredients: this.props.ingredients,
+            price: this.props.price,
             customer: {
                 name: 'MinhHiepLe',
                 address: {
@@ -35,7 +35,6 @@ class ContactData extends Component {
             const response = await axios.post('/orders.json', order);
             this.setState({ loading: false });
             this.props.history.push('/');
-            console.log(response);
         } catch (error) {
             console.log(error);
             this.setState({ loading: false });
@@ -62,4 +61,4 @@ class ContactData extends Component {
         )
     }
 }
-export default withRouter(ContactData)
+export default (ContactData)
