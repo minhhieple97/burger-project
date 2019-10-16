@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
-import updateIngredient from './updateIngredient';
+import Ingredients from './Ingredients';
 export default combineReducers({
-   ingredient:updateIngredient
+   ingredients:Ingredients
 });
 
