@@ -3,7 +3,7 @@ export default (state = {}, action) => {
         case "FETCH_INGREDIENTS":
             return action.payload;
         case "FETCH_INGREDIENTS":
-            return action.payload;
+            return {...state,...action.payload};
         default:
             return state;
     }

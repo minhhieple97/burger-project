@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Aux from '../../hoc/Wraper';
 import { connect } from 'react-redux';
-import { fetchIngredients } from '../../actions/index';
+import { fetchIngredients,updateIngredients } from '../../actions/index';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/BuildControls/BuildControls';
 import OrderSummary from '../../components/OrderSummary/OrderSummary';
