@@ -66,20 +66,19 @@ class BurgerBuilder extends Component {
     purchaseCancelHander = () => {
         this.setState({ purchasing: false });
     };
-    purchaseContinueHander = async () => {
+    purchaseContinueHander = async () => {//
         const queryParams = [];
         for (const i in this.state.ingredients) {
             queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
         };
         queryParams.push(`price=${this.state.totalPrice}`)
         const queryString = queryParams.join('&');
-        this.props.history.push({
+        this.props.history.push({//Khi nhấn vào contine ở modal thì change URL, đi kèm với các query trên.
             pathname: '/checkout',
-            search: '?' + queryString
+            search: `?${queryString}`
         });
     };
     render() {
-        console.log(this.props);
         let orderSummary = null;
         let burger = this.state.error ? `Ingredients can't loaded!` : <Spinner />
         const disabledInfo = {
