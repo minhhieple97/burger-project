@@ -25,7 +25,7 @@ export default class Checkout extends Component {
                 ingredients[param[0]] = +param[1];
             }
         }
-        console.log(ingredients);
+        console.log(this.state.ingredients);
         this.setState({ ingredients, totalPrice: price });
     }
     checkoutCancelled = () => {
@@ -40,7 +40,7 @@ export default class Checkout extends Component {
                 <CheckoutSummary ingredients={this.state.ingredients}
                     checkoutContinued={this.checkoutContinued}
                     checkoutCancelled={this.checkoutCancelled}
-                ></CheckoutSummary>
+                />
                 <Route path={this.props.match.path + '/contact-data'} render={(props) => <ContactData {...props}ingredients={this.state.ingredients} price={this.state.totalPrice} />} ></Route>
             </div>
         )

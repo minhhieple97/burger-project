@@ -44,8 +44,9 @@ class BurgerBuilder extends Component {
         updateIngredients[type] = updateCount;
         const priceAddition = INGREDIENTS_PRICE[type];
         const oldPrice = this.props.totalPrice;
+        const newPrice = oldPrice + priceAddition;
         this.props.updateIngredients(updateIngredients);
-        this.props.updatePrice(priceAddition);
+        this.props.updatePrice(newPrice);
         // this.setState({ ingredients: updateIngredients, totalPrice: newPrice });
         this.updatePurchaseState(this.props.ingredients);
     };
@@ -60,7 +61,8 @@ class BurgerBuilder extends Component {
         const priceDeduction = INGREDIENTS_PRICE[type];
         const oldPrice = this.props.totalPrice;
         const newPrice = oldPrice - priceDeduction;
-        this.setState({ ingredients: updateIngredients, totalPrice: newPrice });
+        this.props.updateIngredients(updateIngredients);
+        this.props.updatePrice(newPrice);
         this.updatePurchaseState(updateIngredients);
     };
     purchaseHander = () => {
@@ -82,7 +84,6 @@ class BurgerBuilder extends Component {
         });
     };
     render() {
-        console.log(this.props);
         let orderSummary = null;
         let burger = this.state.error ? `Ingredients can't loaded!` : <Spinner />
         const disabledInfo = {
