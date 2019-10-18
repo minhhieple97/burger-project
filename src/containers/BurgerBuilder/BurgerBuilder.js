@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Aux from '../../hoc/Wraper';
 import { connect } from 'react-redux';
-import { fetchIngredients,updateIngredients,updatePrice } from '../../actions/index';
+import { fetchIngredients, updateIngredients, updatePrice, fetchPriceIngredients } from '../../actions/index';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/BuildControls/BuildControls';
 import OrderSummary from '../../components/OrderSummary/OrderSummary';
@@ -9,12 +9,6 @@ import axios from '../../axios-orders';
 import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../components/withErrorHandler/withErrorHandler';
-const INGREDIENTS_PRICE = {
-    salad: 0.5,
-    cheese: 0.4,
-    meat: 1.3,
-    bacon: 0.7
-}
 class BurgerBuilder extends Component {
     state = {
         purchaseable: false,
@@ -22,15 +16,9 @@ class BurgerBuilder extends Component {
         loading: false,
         error: false
     };
-    async componentDidMount() {//componentDidMount được gọi khi các child component được render ra hoàn toàn => lúc componentDidMount được gọi thì withErrorHandler đã được render ra r => không thể catch được lỗi => Để khắc phục thì có thể sử dụng componentWillMount ở trong withErrorHandler hoặc hook.
-        // try {
-        //     const response = await axios.get('/ingredients.json');
-        //     this.setState({ ingredients: response.data });
-        // } catch (error) {
-        //     console.log(error);
-        //     this.setState({ error: true });
-        // };
+    componentDidMount() {//componentDidMount được gọi khi các child component được render ra hoàn toàn => lúc componentDidMount được gọi thì withErrorHandler đã được render ra r => không thể catch được lỗi => Để khắc phục thì có thể sử dụng componentWillMount ở trong withErrorHandler hoặc hook.
         this.props.fetchIngredients();
+        this.props.fetchPriceIngredients();
 
     };
     updatePurchaseState(ingredients) {
@@ -42,12 +30,11 @@ class BurgerBuilder extends Component {
         const updateCount = oldCount + 1;
         const updateIngredients = { ...this.props.ingredients };
         updateIngredients[type] = updateCount;
-        const priceAddition = INGREDIENTS_PRICE[type];
+        const priceAddition = this.props.ingPrice[type];
         const oldPrice = this.props.totalPrice;
         const newPrice = oldPrice + priceAddition;
         this.props.updateIngredients(updateIngredients);
         this.props.updatePrice(newPrice);
-        // this.setState({ ingredients: updateIngredients, totalPrice: newPrice });
         this.updatePurchaseState(this.props.ingredients);
     };
     removeIngredientHander = (type) => {
@@ -58,7 +45,7 @@ class BurgerBuilder extends Component {
         const updateCount = oldCount - 1;
         const updateIngredients = { ...this.props.ingredients };
         updateIngredients[type] = updateCount;
-        const priceDeduction = INGREDIENTS_PRICE[type];
+        const priceDeduction = this.props.ingPrice[type];
         const oldPrice = this.props.totalPrice;
         const newPrice = oldPrice - priceDeduction;
         this.props.updateIngredients(updateIngredients);
@@ -71,17 +58,8 @@ class BurgerBuilder extends Component {
     purchaseCancelHander = () => {
         this.setState({ purchasing: false });
     };
-    purchaseContinueHander = async () => {//
-        const queryParams = [];
-        for (const i in this.props.ingredients) {
-            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.props.ingredients[i]));
-        };
-        queryParams.push(`price=${this.props.totalPrice}`)
-        const queryString = queryParams.join('&');
-        this.props.history.push({//Khi nhấn vào contine ở modal thì change URL, đi kèm với các query trên.
-            pathname: '/checkout',
-            search: `?${queryString}`
-        });
+    purchaseContinueHander =  () => {
+        this.props.history.push({ pathname: '/checkout' });
     };
     render() {
         let orderSummary = null;
@@ -126,6 +104,15 @@ class BurgerBuilder extends Component {
     };
 }
 const mapStateToProps = (state, ownProp) => {
-    return { ingredients: state.ingredients , totalPrice:state.price };
+    return {
+        ingredients: state.ingredients,
+        totalPrice: state.price,
+        ingPrice: state.ingPrice
+    };
 };
-export default connect(mapStateToProps, { fetchIngredients,updateIngredients,updatePrice })(withErrorHandler(BurgerBuilder, axios));
+export default connect(mapStateToProps, {
+    fetchIngredients,
+    updateIngredients,
+    updatePrice,
+    fetchPriceIngredients
+})(withErrorHandler(BurgerBuilder, axios));

@@ -1,4 +1,5 @@
 import axios from '../axios-orders';
+import { async } from 'q';
 export const fetchIngredients = () => async (dispatch) => {
     const response = await axios.get('/ingredients.json');
     dispatch({ type: 'FETCH_INGREDIENTS', payload: response.data });
@@ -26,3 +27,11 @@ export const fetchOrders = () => async (dispatch) => {
     }
     dispatch({ type: 'FETCH_ORDERS', payload: fetchOrders });
 }
+export const fetchPriceIngredients = () => async (dispatch) => {
+    const response = await axios.get('/price.json');
+    const ingPrice = {};
+    for (const key in response.data) {
+        ingPrice[key] = parseFloat(response.data[key])
+    }
+    dispatch({ type: 'FETCH_PRICE_INGREDIENTS', payload: ingPrice });
+};
