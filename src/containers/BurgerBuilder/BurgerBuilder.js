@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Aux from '../../hoc/Wraper';
 import { connect } from 'react-redux';
-import { fetchIngredients,updateIngredients } from '../../actions/index';
+import { fetchIngredients,updateIngredients,updatePrice } from '../../actions/index';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/BuildControls/BuildControls';
 import OrderSummary from '../../components/OrderSummary/OrderSummary';
@@ -17,7 +17,6 @@ const INGREDIENTS_PRICE = {
 }
 class BurgerBuilder extends Component {
     state = {
-        totalPrice: 4,
         purchaseable: false,
         purchasing: false,
         loading: false,
@@ -44,9 +43,10 @@ class BurgerBuilder extends Component {
         const updateIngredients = { ...this.props.ingredients };
         updateIngredients[type] = updateCount;
         const priceAddition = INGREDIENTS_PRICE[type];
-        const oldPrice = this.state.totalPrice;
-        const newPrice = oldPrice + priceAddition;
-        this.setState({ ingredients: updateIngredients, totalPrice: newPrice });
+        const oldPrice = this.props.totalPrice;
+        this.props.updateIngredients(updateIngredients);
+        this.props.updatePrice(priceAddition);
+        // this.setState({ ingredients: updateIngredients, totalPrice: newPrice });
         this.updatePurchaseState(this.props.ingredients);
     };
     removeIngredientHander = (type) => {
@@ -58,7 +58,7 @@ class BurgerBuilder extends Component {
         const updateIngredients = { ...this.props.ingredients };
         updateIngredients[type] = updateCount;
         const priceDeduction = INGREDIENTS_PRICE[type];
-        const oldPrice = this.state.totalPrice;
+        const oldPrice = this.props.totalPrice;
         const newPrice = oldPrice - priceDeduction;
         this.setState({ ingredients: updateIngredients, totalPrice: newPrice });
         this.updatePurchaseState(updateIngredients);
@@ -74,7 +74,7 @@ class BurgerBuilder extends Component {
         for (const i in this.props.ingredients) {
             queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.props.ingredients[i]));
         };
-        queryParams.push(`price=${this.state.totalPrice}`)
+        queryParams.push(`price=${this.props.totalPrice}`)
         const queryString = queryParams.join('&');
         this.props.history.push({//Khi nhấn vào contine ở modal thì change URL, đi kèm với các query trên.
             pathname: '/checkout',
@@ -98,7 +98,7 @@ class BurgerBuilder extends Component {
                     <BuildControls
                         ingredientAdded={this.addIngredientHander} removeIngredientHander={this.removeIngredientHander}
                         disabled={disabledInfo}
-                        price={this.state.totalPrice}
+                        price={this.props.totalPrice}
                         purchaseable={this.state.purchaseable}
                         ordered={this.purchaseHander}
                     />
@@ -108,7 +108,7 @@ class BurgerBuilder extends Component {
                 ingredients={this.props.ingredients}
                 purchaseCancel={this.purchaseCancelHander}
                 purchaseContinue={this.purchaseContinueHander}
-                totalPrice={this.state.totalPrice}
+                totalPrice={this.props.totalPrice}
             />
         };
         if (this.state.loading) {
@@ -125,6 +125,6 @@ class BurgerBuilder extends Component {
     };
 }
 const mapStateToProps = (state, ownProp) => {
-    return { ingredients: state.ingredients };
+    return { ingredients: state.ingredients , totalPrice:state.price };
 };
-export default connect(mapStateToProps, { fetchIngredients })(withErrorHandler(BurgerBuilder, axios));
+export default connect(mapStateToProps, { fetchIngredients,updateIngredients,updatePrice })(withErrorHandler(BurgerBuilder, axios));
