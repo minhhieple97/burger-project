@@ -2,16 +2,24 @@ import React from 'react'
 import classes from './input.module.css';
 export default function Input(props) {
     let inputElement = null;
+    let validationError = null;
+    if(props.invalid&&props.checkClicked){
+        validationError = <p className={classes.ValidationError} >Please enter a valid {props.valueType}</p>;
+    }
+    const inputClasses = [classes.InputElement];
+    if(props.invalid&&(props.elementType!=='select')&&props.checkClicked){
+        inputClasses.push(classes.Invalid)
+    }
     switch (props.elementType) {
         case ('input'):
-            inputElement = <input className={classes.InputElement}   {...props.elementConfig} onChange={props.changed} value={props.value}  />
+            inputElement = <input className={inputClasses.join(' ')}   {...props.elementConfig} onChange={props.changed} value={props.value} onClick={props.clicked}  />
             break;
         case ('textarea'):
-            inputElement = <textarea className={classes.InputElement} {...props.elementConfig} onChange={props.changed} value={props.value} />
+            inputElement = <textarea className={inputClasses.join(' ')} {...props.elementConfig} onChange={props.changed} value={props.value} onClick={props.clicked}  />
             break;
         case ('select'):
             inputElement = <select 
-            className={classes.InputElement} 
+            className={inputClasses.join(' ')} 
             {...props.elementConfig} 
             onChange={props.changed} 
             value={props.value} >
@@ -24,10 +32,19 @@ export default function Input(props) {
             break;
         default:
             inputElement = <input 
-            className={classes.InputElement} 
+            className={inputClasses.join(' ')} 
             {...props.elementConfig} 
             value={props.value} 
             />;
+    }
+    if(validationError){
+        return (
+            <div className={classes.Input}>
+                <label className={classes.Label}>{props.label}</label>
+                {inputElement}
+                {validationError}
+            </div>
+        );
     }
     return (
         <div className={classes.Input} >
