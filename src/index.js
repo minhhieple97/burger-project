@@ -2,18 +2,30 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import reducers from './reducers';
+import { createStore, applyMiddleware, compose } from 'redux';
+// import reducers from './store/reducer';
+import reducers from './store/reducers/burgerBuilder';
 import './index.css';
 import App from './App';
 import { BrowserRouter as Router } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const app = (
   <Router>
     <App></App>
   </Router>
 )
-const store = createStore(reducers, applyMiddleware(thunk));
+const logger = store => {
+  return next =>{
+    return action =>{
+      console.log('[Middleware] Dispatching',action);
+      const result = next(action);
+      console.log('[Middleware next state]',store.getState());
+      return result;
+    }
+  }
+}
+const store = createStore(reducers, composeEnhancers(applyMiddleware(logger,thunk)));
 ReactDOM.render(
   <Provider store={store}>
     <Router>
