@@ -5,6 +5,7 @@ import classes from './contactData.module.css';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../components/withErrorHandler/withErrorHandler';
+import * as  actions   from '../../../store/actions';
 import {connect} from 'react-redux';
 class ContactData extends Component {
     state = {
@@ -84,14 +85,13 @@ class ContactData extends Component {
                         { value: 'cheapest', displayValue: 'Cheapest' }
                     ]
                 },
-                value: '',
+                value: 'fastest',
                 valid: true,
                 validation: {}
             }
 
         },
-        formIsValid: false,
-        loading: false
+        formIsValid: false
     }
     orderHandler = async (e) => {
         e.preventDefault();
@@ -105,14 +105,8 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData
         };
-        try {
-            await axios.post('/orders.json', order);
-            this.setState({ loading: false });
-            this.props.history.push('/');
-        } catch (error) {
-            console.log(error);
-            this.setState({ loading: false });
-        }
+        this.props.onOrderBurger(order);
+        
     };
     inputChangedHandler = (event, inputIdentifier) => {
         const updateOrderForm = { ...this.state.orderForm };//Coply object (chú ý rằng object chỉ được copy ở cấp độ 1 - tài liệu của react không khuyến khích copy lại toàn bộ state, dùng đến mức độ nào thì copy đến đó.)
@@ -171,7 +165,7 @@ class ContactData extends Component {
                 <Button btnType="Success" disabled={!this.state.formIsValid} clicked={this.orderHandler.bind(this)} >Order</Button>
             </form>
         );
-        if (this.state.loading) {
+        if (this.props.loading) {
             form = <Spinner />
         }
         return (
@@ -184,8 +178,14 @@ class ContactData extends Component {
 }
 const mapStateToProps = (state)=>{
     return {
-        ingredients:state.ingredients,
-        price:state.totalPrice
+        ingredients:state.burgerBuilder.ingredients,
+        price:state.burgerBuilder.totalPrice,
+        loading:state.loading
     }
 }
-export default connect(mapStateToProps)(withErrorHandler(ContactData,axios));
+const mapDispatchToProps = (dispatch)=>{
+    return {
+          onOrderBurger:(orderData)=>dispatch(actions.purchaseBurger(orderData))
+    }
+};
+export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData,axios));
