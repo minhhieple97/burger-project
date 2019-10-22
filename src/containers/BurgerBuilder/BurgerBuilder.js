@@ -21,6 +21,7 @@ class BurgerBuilder extends Component {
         loading: false,
     };
     componentDidMount() {
+        console.log("[Didmount component]")
         this.props.onInitIngredients();
     }
     updatePurchaseState(ingredients) {
@@ -28,13 +29,10 @@ class BurgerBuilder extends Component {
         return sum > 0 // check purchase 
     };
     addIngredientHander = (type) => {
-        console.log(type);
-        const oldCount = this.props.ingredients[type];
         this.props.onIngredientAdded(type);
         this.updatePurchaseState(this.props.ingredients);
     };
     removeIngredientHander = (type) => {
-        console.log(type);
         const oldCount = this.props.ingredients[type];
         if (oldCount <= 0) {
             return;
@@ -49,8 +47,8 @@ class BurgerBuilder extends Component {
     purchaseCancelHander = () => {
         this.setState({ purchasing: false });
     };
-    purchaseContinueHander = async () => {//
-        this.props.onInitPurchase();
+    purchaseContinueHander = async () => {
+        this.props.onInitPurchase();//Khi ấn continue checkout thì khởi tạo state bằng action PURCHASE_INIT
         this.props.history.push({ pathname: '/checkout' });
     };
     render() {
@@ -100,7 +98,7 @@ const mapStateToProps = (state) => {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
         error: state.burgerBuilder.error,
-        purchased:state.order.purchased
+        purchased: state.order.purchased
     }
 };
 const mapDispatchToProps = (dispatch) => {
@@ -108,7 +106,7 @@ const mapDispatchToProps = (dispatch) => {
         onIngredientAdded: (ingName) => dispatch(actions.addIngredient(ingName)),
         onIngredientRemoved: (ingName) => dispatch(actions.removeIngredient(ingName)),
         onInitIngredients: () => dispatch(actions.initIngredient()),
-        onInitPurchase:()=>dispatch(actions.purchaseInit()) 
+        onInitPurchase: () => dispatch(actions.purchaseInit())
     }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));

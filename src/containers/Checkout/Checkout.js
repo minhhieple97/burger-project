@@ -5,9 +5,6 @@ import ContactData from './ContactData/ContactData';
 import { Route, Redirect } from 'react-router-dom';
 import * as actions from '../../store/actions';
 class Checkout extends Component {
-    componentWillMount() {
-        // this.props.onInitPurchase();
-    }
     checkoutCancelled = () => {
         this.props.history.goBack();
     }
@@ -17,32 +14,31 @@ class Checkout extends Component {
     render() {
         let summary = <Redirect to="/" />
         if (this.props.ingredients) {
-            const purchasedRedirect = this.props.purchased ? <Redirect to="/"/>:null 
+            const purchasedRedirect = (this.props.purchased) ? (<Redirect to="/" />) : null
             summary = (
-            <div>
-            {purchasedRedirect}
-               <CheckoutSummary
-                ingredients={this.props.ingredients}
-                checkoutContinued={this.checkoutContinued}
-                checkoutCancelled={this.checkoutCancelled}/>
-               <Route path={this.props.match.path + '/contact-data'} component={ContactData} />  
-            </div>
-           )
+                <div>
+                    {purchasedRedirect}
+                    <CheckoutSummary
+                        ingredients={this.props.ingredients}
+                        checkoutContinued={this.checkoutContinued}
+                        checkoutCancelled={this.checkoutCancelled} />
+                    <Route path={this.props.match.path + '/contact-data'} component={ContactData} />
+                </div>
+            )
         }
         return summary
-        
     }
 }
 const mapStateToProps = (state) => {
     return {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
-        purchased:state.order.purchased
+        purchased: state.order.purchased//purchased là state trong order để xác định xem user đã thanh toán hay chưa
     }
 };
-const mapDispatchToProps = (dispatch)=>{
-    return {
-       onInitPurchase:()=>dispatch(actions.purchaseInit()) 
-    }
-}
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         onInitPurchase: () => dispatch(actions.purchaseInit())
+//     }
+// }
 export default connect(mapStateToProps)(Checkout);

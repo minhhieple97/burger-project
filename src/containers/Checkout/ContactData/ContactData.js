@@ -5,8 +5,8 @@ import classes from './contactData.module.css';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../components/withErrorHandler/withErrorHandler';
-import * as  actions   from '../../../store/actions';
-import {connect} from 'react-redux';
+import * as  actions from '../../../store/actions';
+import { connect } from 'react-redux';
 class ContactData extends Component {
     state = {
         orderForm: {
@@ -95,7 +95,6 @@ class ContactData extends Component {
     }
     orderHandler = async (e) => {
         e.preventDefault();
-        this.setState({ loading: true });
         const formData = {};
         for (const formElementIdentifier in this.state.orderForm) {
             formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
@@ -106,7 +105,7 @@ class ContactData extends Component {
             orderData: formData
         };
         this.props.onOrderBurger(order);
-        
+
     };
     inputChangedHandler = (event, inputIdentifier) => {
         const updateOrderForm = { ...this.state.orderForm };//Coply object (chú ý rằng object chỉ được copy ở cấp độ 1 - tài liệu của react không khuyến khích copy lại toàn bộ state, dùng đến mức độ nào thì copy đến đó.)
@@ -119,8 +118,8 @@ class ContactData extends Component {
         updateOrderForm[inputIdentifier] = updateFormElement;//cập nhật lại state.
         let formIsValid = true;//Mỗi lần một ô input thay đổi thì lại check xem toàn bộ form có hợp lệ hay không ?
         for (const key in updateOrderForm) {//lặp qua tất cả các key trong state (orderForm)
-            formIsValid = updateOrderForm[key].valid&&formIsValid;//lặp qua tất cả giá trị của valid của tất cả các object trong orderForm , giá trị của formIsvalid trong mỗi lần lặp sẽ ảnh hưởng đến lần lặp tiếp theo => chỉ cần formIsValid=false thì giá trị của nó luôn bằng false
-            if(!formIsValid) break; 
+            formIsValid = updateOrderForm[key].valid && formIsValid;//lặp qua tất cả giá trị của valid của tất cả các object trong orderForm , giá trị của formIsvalid trong mỗi lần lặp sẽ ảnh hưởng đến lần lặp tiếp theo => chỉ cần formIsValid=false thì giá trị của nó luôn bằng false
+            if (!formIsValid) break;
         }
         this.setState({ orderForm: updateOrderForm, formIsValid: formIsValid });
     };
@@ -176,16 +175,16 @@ class ContactData extends Component {
         )
     }
 }
-const mapStateToProps = (state)=>{
+const mapStateToProps = (state) => {
     return {
-        ingredients:state.burgerBuilder.ingredients,
-        price:state.burgerBuilder.totalPrice,
-        loading:state.loading
+        ingredients: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.totalPrice,
+        loading: state.order.loading
     }
 }
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = (dispatch) => {
     return {
-          onOrderBurger:(orderData)=>dispatch(actions.purchaseBurger(orderData))
+        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
     }
 };
-export default connect(mapStateToProps,mapDispatchToProps)(withErrorHandler(ContactData,axios));
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(ContactData, axios));
