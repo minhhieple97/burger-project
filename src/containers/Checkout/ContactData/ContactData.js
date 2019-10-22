@@ -4,6 +4,8 @@ import axios from '../../../axios-orders';
 import classes from './contactData.module.css';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
+import withErrorHandler from '../../../components/withErrorHandler/withErrorHandler';
+import {connect} from 'react-redux';
 class ContactData extends Component {
     state = {
         orderForm: {
@@ -18,7 +20,7 @@ class ContactData extends Component {
                     required: true
                 },
                 checkClick: false,
-                valid:false
+                valid: false
             },
             street: {
                 elementType: 'input',
@@ -31,7 +33,7 @@ class ContactData extends Component {
                     required: true
                 },
                 checkClick: false,
-                valid:false
+                valid: false
             },
             zipCode: {
                 elementType: 'input',
@@ -43,10 +45,10 @@ class ContactData extends Component {
                 validation: {
                     required: true,
                     minLength: 5,
-                    maxLength: 5
+                    maxLength: 15
                 },
                 checkClick: false,
-                valid:false
+                valid: false
             },
             country: {
                 elementType: 'input',
@@ -59,7 +61,7 @@ class ContactData extends Component {
                     required: true
                 },
                 checkClick: false,
-                valid:false
+                valid: false
             },
             email: {
                 elementType: 'input',
@@ -72,7 +74,7 @@ class ContactData extends Component {
                     required: true
                 },
                 checkClick: false,
-                valid:false
+                valid: false
             },
             deliveryMethod: {
                 elementType: 'select',
@@ -83,8 +85,8 @@ class ContactData extends Component {
                     ]
                 },
                 value: '',
-                valid:false,
-                validation:{}
+                valid: true,
+                validation: {}
             }
 
         },
@@ -113,19 +115,20 @@ class ContactData extends Component {
         }
     };
     inputChangedHandler = (event, inputIdentifier) => {
-        const updateOrderForm = { ...this.state.orderForm };
-        const updateFormElement = {
+        const updateOrderForm = { ...this.state.orderForm };//Coply object (chú ý rằng object chỉ được copy ở cấp độ 1 - tài liệu của react không khuyến khích copy lại toàn bộ state, dùng đến mức độ nào thì copy đến đó.)
+        const updateFormElement = {//lấy object trong state theo tên truyền vào trong tham số.
             ...updateOrderForm[inputIdentifier]
         };
-        updateFormElement.value = event.target.value;
-        updateFormElement.valid = this.checkValidity(updateFormElement.value, updateFormElement.validation);
-        updateFormElement.checkClick = true;
-        updateOrderForm[inputIdentifier] = updateFormElement;
-        let formIsValid = true;
-        for (const key in updateOrderForm) {
-            formIsValid = updateOrderForm[key].valid ;
+        updateFormElement.value = event.target.value;//cập nhật giá trị.
+        updateFormElement.valid = this.checkValidity(updateFormElement.value, updateFormElement.validation);//check xem được valid theo đúng đk hay chưa 
+        updateFormElement.checkClick = true;//check xem được click hay chưa
+        updateOrderForm[inputIdentifier] = updateFormElement;//cập nhật lại state.
+        let formIsValid = true;//Mỗi lần một ô input thay đổi thì lại check xem toàn bộ form có hợp lệ hay không ?
+        for (const key in updateOrderForm) {//lặp qua tất cả các key trong state (orderForm)
+            formIsValid = updateOrderForm[key].valid&&formIsValid;//lặp qua tất cả giá trị của valid của tất cả các object trong orderForm , giá trị của formIsvalid trong mỗi lần lặp sẽ ảnh hưởng đến lần lặp tiếp theo => chỉ cần formIsValid=false thì giá trị của nó luôn bằng false
+            if(!formIsValid) break; 
         }
-        this.setState({ orderForm: updateOrderForm,formIsValid });
+        this.setState({ orderForm: updateOrderForm, formIsValid: formIsValid });
     };
     checkValidity(value, rules) {
         let isValid = true;
@@ -179,4 +182,10 @@ class ContactData extends Component {
         )
     }
 }
-export default (ContactData)
+const mapStateToProps = (state)=>{
+    return {
+        ingredients:state.ingredients,
+        price:state.totalPrice
+    }
+}
+export default connect(mapStateToProps)(withErrorHandler(ContactData,axios));
