@@ -21,17 +21,17 @@ const app = (
     <App></App>
   </Router>
 )
-// const logger = store => {
-//   return next =>{
-//     return action =>{
-//       console.log('[Middleware] Dispatching',action);
-//       const result = next(action);
-//       console.log('[Middleware next state]',store.getState());
-//       return result;
-//     }
-//   }
-// }
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+const logger = store => {
+  return next =>{
+    return action =>{
+      console.log('[Middleware] Dispatching',action);
+      const result = next(action);
+      // console.log('[Middleware next state]',store.getState());
+      return result;
+    }
+  }
+}
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk,logger)));
 ReactDOM.render(
   <Provider store={store}>
     <Router>
