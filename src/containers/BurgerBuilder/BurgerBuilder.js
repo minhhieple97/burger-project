@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Aux from '../../hoc/Wraper';
 import Burger from '../../components/Burger/Burger';
 import { connect } from 'react-redux';
-import * as burgerBuilderActions from '../../store/actions/index';
+import * as actions from '../../store/actions/index';
 import BuildControls from '../../components/BuildControls/BuildControls';
 import OrderSummary from '../../components/OrderSummary/OrderSummary';
 import axios from '../../axios-orders';
@@ -25,16 +25,13 @@ class BurgerBuilder extends Component {
     }
     updatePurchaseState(ingredients) {
         const sum = Object.keys(ingredients).map((ing) => ingredients[ing]).reduce((total, item) => total += item, 0);// Calculate total purchase money
-        return sum >= 0 // check purchase 
+        return sum > 0 // check purchase 
     };
     addIngredientHander = (type) => {
-        console.log(type);
-        const oldCount = this.props.ingredients[type];
         this.props.onIngredientAdded(type);
         this.updatePurchaseState(this.props.ingredients);
     };
     removeIngredientHander = (type) => {
-        console.log(type);
         const oldCount = this.props.ingredients[type];
         if (oldCount <= 0) {
             return;
@@ -49,7 +46,8 @@ class BurgerBuilder extends Component {
     purchaseCancelHander = () => {
         this.setState({ purchasing: false });
     };
-    purchaseContinueHander = async () => {//
+    purchaseContinueHander = async () => {
+        this.props.onInitPurchase();//Khi ấn continue checkout thì khởi tạo state bằng action PURCHASE_INIT
         this.props.history.push({ pathname: '/checkout' });
     };
     render() {
@@ -96,16 +94,18 @@ class BurgerBuilder extends Component {
 }
 const mapStateToProps = (state) => {
     return {
-        ingredients: state.ingredients,
-        totalPrice: state.totalPrice,
-        error: state.error
+        ingredients: state.burgerBuilder.ingredients,
+        totalPrice: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error,
+        purchased: state.order.purchased
     }
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        onIngredientAdded: (ingName) => dispatch(burgerBuilderActions.addIngredient(ingName)),
-        onIngredientRemoved: (ingName) => dispatch(burgerBuilderActions.removeIngredient(ingName)),
-        onInitIngredients: () => dispatch(burgerBuilderActions.initIngredient())
+        onIngredientAdded: (ingName) => dispatch(actions.addIngredient(ingName)),
+        onIngredientRemoved: (ingName) => dispatch(actions.removeIngredient(ingName)),
+        onInitIngredients: () => dispatch(actions.initIngredient()),
+        onInitPurchase: () => dispatch(actions.purchaseInit())
     }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));

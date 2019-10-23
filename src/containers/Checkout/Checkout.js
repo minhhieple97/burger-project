@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import ContactData from './ContactData/ContactData';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
+import * as actions from '../../store/actions';
 class Checkout extends Component {
     checkoutCancelled = () => {
         this.props.history.goBack();
@@ -11,22 +12,35 @@ class Checkout extends Component {
         this.props.history.replace('/checkout/contact-data');
     }
     render() {
-        return (
-            <div>
-                <CheckoutSummary 
-                    ingredients={this.props.ingredients}
-                    checkoutContinued={this.checkoutContinued}
-                    checkoutCancelled={this.checkoutCancelled}
-                />
-                <Route path={this.props.match.path + '/contact-data'} component={ContactData} />
-            </div>
-        )
+        let summary = <Redirect to="/" />
+        if (this.props.ingredients) {
+            const purchasedRedirect = (this.props.purchased) ? (<Redirect to="/" />) : null//Khi trạng thái purchased là true thì redirect trang trang chủ  
+            // action PURCHASE_BURGER_SUCCESS được kích hoạt ở component ContactData sẽ set purchased = true. 
+            summary = (
+                <div>
+                    {purchasedRedirect}
+                    <CheckoutSummary
+                        ingredients={this.props.ingredients}
+                        checkoutContinued={this.checkoutContinued}
+                        checkoutCancelled={this.checkoutCancelled} />
+                    <Route path={this.props.match.path + '/contact-data'} component={ContactData} />
+                </div>
+            )
+        }
+        return summary
     }
 }
-const mapStateToProps = (state)=>{
-  return {
-      ingredients:state.ingredients,
-      totalPrice:state.totalPrice
-  }
+const mapStateToProps = (state) => {
+    return {
+        ingredients: state.burgerBuilder.ingredients,
+        totalPrice: state.burgerBuilder.totalPrice,
+        purchased: state.order.purchased//purchased là state trong order để xác định xem user đã thanh toán hay chưa
+        //Khi 
+    }
 };
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         onInitPurchase: () => dispatch(actions.purchaseInit())
+//     }
+// }
 export default connect(mapStateToProps)(Checkout);

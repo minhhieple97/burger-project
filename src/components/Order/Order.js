@@ -5,7 +5,6 @@ export default function Order(props) {
     for (const ingredientName in props.ingredients) {
         ingredients.push({ name: ingredientName, amount: props.ingredients[ingredientName]});
      }
-     console.log(ingredients);
      const ingredientOutput = ingredients.map(ig=>{
        return <span style={{
            textTransform:'capitalize',
