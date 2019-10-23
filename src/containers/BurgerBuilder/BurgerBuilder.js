@@ -21,7 +21,6 @@ class BurgerBuilder extends Component {
         loading: false,
     };
     componentDidMount() {
-        console.log("[Didmount component]")
         this.props.onInitIngredients();
     }
     updatePurchaseState(ingredients) {
