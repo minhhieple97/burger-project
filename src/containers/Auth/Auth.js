@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import { Redirect } from 'react-router-dom';
 import classes from './auth.module.css';
 import * as actions from '../../store/actions';
 import Spinner from '../../components/UI/Spinner/Spinner';
@@ -103,12 +104,17 @@ class Auth extends Component {
                 <p>{this.props.error.message}</p>
             )
         }
+        let authRedirect = null;
+        if (this.props.isAuthenticated) {
+            authRedirect = <Redirect to="/" />
+        }
 
         if (this.props.loading) {
             content = <Spinner />
         }
         return <div className={classes.Auth} >
-             {error}
+            {error}
+            {authRedirect}
             {content}
             <Button clicked={this.switchAuthModeHandler} btnType="Danger">SWITCH TO {this.state.isSignup ? 'SIGNIN' : 'SIGNUP'}</Button>
         </div>
@@ -117,7 +123,8 @@ class Auth extends Component {
 const mapStateToProps = (state) => {
     return {
         loading: state.auth.loading,
-        error: state.auth.error
+        error: state.auth.error,
+        isAuthenticated: state.auth.token !== null
     }
 }
 const mapDispathToProps = (dispatch) => {

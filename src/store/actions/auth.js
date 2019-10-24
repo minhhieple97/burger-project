@@ -6,6 +6,18 @@ export const authStart = () => {
         type: actionTypes.AUTH_START
     }
 };
+export const checkAuthTimeout = (expirationTime) => {
+    return dispatch => {
+        setTimeout(() => {
+            dispatch(logout())
+        }, expirationTime * 1000);
+    }
+}
+export const logout = () => {
+    return {
+        type: actionTypes.AUTH_LOGOUT
+    }
+}
 export const authSuccess = (authData) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
@@ -21,7 +33,6 @@ export const authFail = (error) => {
 export const auth = (email, password, isSignup) => {
     return async dispatch => {
         try {
-            console.log(isSignup);
             dispatch(authStart());
             const authData = { email, password, returnSecureToken: true };
             let url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${TOKEN}`;
@@ -30,11 +41,10 @@ export const auth = (email, password, isSignup) => {
             }
             const response = await axios.post(url, authData);
             dispatch(authSuccess(response.data));
+            dispatch(checkAuthTimeout(response.data.expiresIn));
         } catch (error) {
             console.log(error.message);
             dispatch(authFail(error.response.data.error));
         }
-
-
     }
 }

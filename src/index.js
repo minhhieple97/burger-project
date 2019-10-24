@@ -15,7 +15,7 @@ import authReducer from './store/reducers/auth';
 const rootReducer = combineReducers({
   order: orderReducer,
   burgerBuilder: burgerReducer,
-  auth:authReducer
+  auth: authReducer
 })
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const app = (
@@ -24,20 +24,20 @@ const app = (
   </Router>
 )
 const logger = store => {
-  return next =>{
-    return action =>{
-      console.log('[Middleware] Dispatching',action);
+  return next => {
+    return action => {
+      console.log('[Middleware] Dispatching', action);
       const result = next(action);
       // console.log('[Middleware next state]',store.getState());
       return result;
     }
   }
 }
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(logger,thunk)));
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(logger, thunk)));
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <App></App>
+      <App />
     </Router>
   </Provider>,
   document.getElementById('root'));
