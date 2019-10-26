@@ -14,6 +14,9 @@ export const checkAuthTimeout = (expirationTime) => {
     }
 }
 export const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiresIn');
+    localStorage.removeItem('userId');
     return {
         type: actionTypes.AUTH_LOGOUT
     }
@@ -40,7 +43,13 @@ export const auth = (email, password, isSignup) => {
                 url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${TOKEN}`
             }
             const response = await axios.post(url, authData);
+            const expiresIn = new Date(new Date().getTime() + response.data.expiresIn * 1000);
+            console.log(response);
+            localStorage.setItem('token', response.data.idToken);
+            localStorage.setItem('userId', response.data.localId);
+            localStorage.setItem('expiresIn', expiresIn);
             dispatch(authSuccess(response.data));
+
             dispatch(checkAuthTimeout(response.data.expiresIn));
         } catch (error) {
             console.log(error.message);
@@ -48,9 +57,31 @@ export const auth = (email, password, isSignup) => {
         }
     }
 }
-export const setAuthRedirectPath = (path)=>{
+export const setAuthRedirectPath = (path) => {
     return {
-        type:actionTypes.SET_AUTH_REDIRECT_PATH,
+        type: actionTypes.SET_AUTH_REDIRECT_PATH,
         path
+    }
+}
+export const authCheckState = () => {
+    return dispatch => {
+        const token = localStorage.getItem('token');
+        console.log(token);
+        if (!token) {
+            dispatch(logout());
+        } else {
+            const timeExpiration = new Date(localStorage.getItem('expiresIn'));
+            if (timeExpiration > new Date()) {
+                const userId = localStorage.getItem('userId');
+                dispatch(authSuccess({
+                    token, userId
+                }));
+                dispatch(checkAuthTimeout(timeExpiration.getSeconds() - new Date().getSeconds()))
+
+            }
+            else {
+                dispatch(logout());
+            }
+        }
     }
 }

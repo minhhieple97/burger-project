@@ -75,6 +75,13 @@ class Auth extends Component {
             return { isSignup: !preState.isSignup }
         })
     }
+    componentDidMount() {
+        if (!this.props.buildingBurger && this.props.authenRedirectPath) {
+            this.props.onSetAuthRedirectPath();
+        }
+        //Chúng ta có một state dùng để xác định trạng thái người dùng có đang build một burger hay không ? nhằm giải quyết vấn đề khi mới vào trang chưa đăng nhập và build burger => chuyển sang trang auth để order => khi quay lại trang chủ thì ingredient bị mất =>để giải quyết thì sau khi nhận auth xong thì chuyển sang trang checkout luôn. mà không back lại BugerBuilder nữa.
+    }
+
     render() {
         const formElementsArray = [];
         for (let key in this.state.controls) {
@@ -106,7 +113,7 @@ class Auth extends Component {
         }
         let authRedirect = null;
         if (this.props.isAuthenticated) {
-            authRedirect = <Redirect to="/" />
+            authRedirect = <Redirect to={this.props.authenRedirectPath} />
         }
 
         if (this.props.loading) {
@@ -124,12 +131,15 @@ const mapStateToProps = (state) => {
     return {
         loading: state.auth.loading,
         error: state.auth.error,
-        isAuthenticated: state.auth.token !== null
+        isAuthenticated: state.auth.token !== null,
+        buildingBurger: state.burgerBuilder.building,
+        authenRedirectPath: state.auth.authRedirect
     }
 }
 const mapDispathToProps = (dispatch) => {
     return {
-        onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup))
+        onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup)),
+        onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath('/'))
     }
 }
 export default connect(mapStateToProps, mapDispathToProps)(Auth);
