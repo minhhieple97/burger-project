@@ -76,7 +76,7 @@ class Auth extends Component {
         })
     }
     componentDidMount() {
-        if (!this.props.buildingBurger && this.props.authenRedirectPath) {
+        if (!this.props.buildingBurger && this.props.authRedirectPath !== '/') {
             this.props.onSetAuthRedirectPath();
         }
         //Chúng ta có một state dùng để xác định trạng thái người dùng có đang build một burger hay không ? nhằm giải quyết vấn đề khi mới vào trang chưa đăng nhập và build burger => chuyển sang trang auth để order => khi quay lại trang chủ thì ingredient bị mất =>để giải quyết thì sau khi nhận auth xong thì chuyển sang trang checkout luôn. mà không back lại BugerBuilder nữa.

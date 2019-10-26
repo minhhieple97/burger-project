@@ -6,11 +6,12 @@ export const authStart = () => {
         type: actionTypes.AUTH_START
     }
 };
-export const checkAuthTimeout = (expirationTime) => {
+export const checkAuthTimeout = (expirationTime) => {//Hàm kiểm tra thời gian đăng nhập cho phép
+    console.log(expirationTime);
     return dispatch => {
         setTimeout(() => {
             dispatch(logout())
-        }, expirationTime * 1000);
+        }, expirationTime * 1000);//Sau khoảng thời gian này thì tự động gọi hàm logout
     }
 }
 export const logout = () => {
@@ -44,12 +45,10 @@ export const auth = (email, password, isSignup) => {
             }
             const response = await axios.post(url, authData);
             const expiresIn = new Date(new Date().getTime() + response.data.expiresIn * 1000);
-            console.log(response);
             localStorage.setItem('token', response.data.idToken);
             localStorage.setItem('userId', response.data.localId);
             localStorage.setItem('expiresIn', expiresIn);
             dispatch(authSuccess(response.data));
-
             dispatch(checkAuthTimeout(response.data.expiresIn));
         } catch (error) {
             console.log(error.message);
@@ -63,20 +62,23 @@ export const setAuthRedirectPath = (path) => {
         path
     }
 }
-export const authCheckState = () => {
+export const authCheckState = () => {//Hàm kiểm tra xem đã thực hiện đăngn nhập hay chưa ?, lưu 
     return dispatch => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');//Kiểm tra token trong localStorage
         console.log(token);
-        if (!token) {
+        if (!token) {//Token không tồn tại thì call action logout
             dispatch(logout());
         } else {
-            const timeExpiration = new Date(localStorage.getItem('expiresIn'));
+            const timeExpiration = new Date(localStorage.getItem('expiresIn'));//Lấy expiresIn trong localStorage
+            console.log(timeExpiration);
+            console.log(timeExpiration.getSeconds());
+            console.log(new Date().getSeconds());
             if (timeExpiration > new Date()) {
                 const userId = localStorage.getItem('userId');
                 dispatch(authSuccess({
                     token, userId
                 }));
-                dispatch(checkAuthTimeout(timeExpiration.getSeconds() - new Date().getSeconds()))
+                dispatch(checkAuthTimeout((timeExpiration.getTime() - new Date().getTime())/1000))
 
             }
             else {
