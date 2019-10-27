@@ -1,4 +1,4 @@
-import * as actionTypes from './actionTypes';
+  import * as actionTypes from './actionTypes';
 import axios from 'axios';
 const TOKEN = `AIzaSyDU23a5ieqoH4XsUCHo_Yu2zmMIhttmuAg`;
 export const authStart = () => {
@@ -7,7 +7,6 @@ export const authStart = () => {
     }
 };
 export const checkAuthTimeout = (expirationTime) => {//Hàm kiểm tra thời gian đăng nhập cho phép
-    console.log(expirationTime);
     return dispatch => {
         setTimeout(() => {
             dispatch(logout())
@@ -65,18 +64,14 @@ export const setAuthRedirectPath = (path) => {
 export const authCheckState = () => {//Hàm kiểm tra xem đã thực hiện đăngn nhập hay chưa ?, lưu 
     return dispatch => {
         const token = localStorage.getItem('token');//Kiểm tra token trong localStorage
-        console.log(token);
         if (!token) {//Token không tồn tại thì call action logout
             dispatch(logout());
         } else {
             const timeExpiration = new Date(localStorage.getItem('expiresIn'));//Lấy expiresIn trong localStorage
-            console.log(timeExpiration);
-            console.log(timeExpiration.getSeconds());
-            console.log(new Date().getSeconds());
             if (timeExpiration > new Date()) {
                 const userId = localStorage.getItem('userId');
                 dispatch(authSuccess({
-                    token, userId
+                    idToken:token, localId:userId
                 }));
                 dispatch(checkAuthTimeout((timeExpiration.getTime() - new Date().getTime())/1000))
 

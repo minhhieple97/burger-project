@@ -6,6 +6,7 @@ import classes from './auth.module.css';
 import * as actions from '../../store/actions';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import { connect } from 'react-redux';
+import { updateObject } from '../../helper/utilly';
 class Auth extends Component {
     state = {
         controls: {
@@ -40,7 +41,7 @@ class Auth extends Component {
 
         },
         isSignup: true
-    }
+    };
     checkValidity(value, rules) {
         let isValid = true;
         if (rules.required) {
@@ -55,32 +56,31 @@ class Auth extends Component {
         return isValid;
     };
     inputChangedHandler = (event, controlName) => {
-        const updatedControl = {
-            ...this.state.controls,
-            [controlName]: {
-                ...this.state.controls[controlName],
+        const updatedControl = updateObject(this.state.controls, {
+            [controlName]: updateObject(this.state.controls[controlName], {
                 value: event.target.value,
                 valid: this.checkValidity(event.target.value, this.state.controls[controlName].validation),
                 checkClick: true
-            }
-        };
+            })
+        });
         this.setState({ controls: updatedControl });
-    }
+    };
     submitHandled = (event) => {
         event.preventDefault();
         this.props.onAuth(this.state.controls.email.value, this.state.controls.password.value, this.state.isSignup);
-    }
+    };
     switchAuthModeHandler = () => {
         this.setState(preState => {
             return { isSignup: !preState.isSignup }
         })
-    }
+    };
     componentDidMount() {
-        if (!this.props.buildingBurger && this.props.authRedirectPath !== '/') {
+        if (!this.props.buildingBurger && (this.props.authenRedirectPath !== '/')) {
+            console.log("Running here!");
             this.props.onSetAuthRedirectPath();
         }
         //Chúng ta có một state dùng để xác định trạng thái người dùng có đang build một burger hay không ? nhằm giải quyết vấn đề khi mới vào trang chưa đăng nhập và build burger => chuyển sang trang auth để order => khi quay lại trang chủ thì ingredient bị mất =>để giải quyết thì sau khi nhận auth xong thì chuyển sang trang checkout luôn. mà không back lại BugerBuilder nữa.
-    }
+    };
 
     render() {
         const formElementsArray = [];
@@ -125,7 +125,7 @@ class Auth extends Component {
             {content}
             <Button clicked={this.switchAuthModeHandler} btnType="Danger">SWITCH TO {this.state.isSignup ? 'SIGNIN' : 'SIGNUP'}</Button>
         </div>
-    }
+    };
 }
 const mapStateToProps = (state) => {
     return {

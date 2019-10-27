@@ -6,6 +6,7 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../components/withErrorHandler/withErrorHandler';
 import * as  actions from '../../../store/actions';
+import { updateObject } from '../../../helper/utilly';
 import { connect } from 'react-redux';
 class ContactData extends Component {
     state = {
@@ -109,13 +110,17 @@ class ContactData extends Component {
 
     };
     inputChangedHandler = (event, inputIdentifier) => {
-        const updateOrderForm = { ...this.state.orderForm };//Coply object (chú ý rằng object chỉ được copy ở cấp độ 1 - tài liệu của react không khuyến khích copy lại toàn bộ state, dùng đến mức độ nào thì copy đến đó.)
-        const updateFormElement = {//lấy object trong state theo tên truyền vào trong tham số.
-            ...updateOrderForm[inputIdentifier]
-        };
-        updateFormElement.value = event.target.value;//cập nhật giá trị.
-        updateFormElement.valid = this.checkValidity(updateFormElement.value, updateFormElement.validation);//check xem được valid theo đúng đk hay chưa 
-        updateFormElement.checkClick = true;//check xem được click hay chưa
+        const updateFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+            value: event.target.value,
+            valid: this.checkValidity(
+                event.target.value,
+                this.state.orderForm[inputIdentifier].validation
+            ),
+            checkClick: true
+        });
+        const updateOrderForm = updateObject(this.state.orderForm, {
+            [inputIdentifier]: updateFormElement
+        });
         updateOrderForm[inputIdentifier] = updateFormElement;//cập nhật lại state.
         let formIsValid = true;//Mỗi lần một ô input thay đổi thì lại check xem toàn bộ form có hợp lệ hay không ?
         for (const key in updateOrderForm) {//lặp qua tất cả các key trong state (orderForm)
