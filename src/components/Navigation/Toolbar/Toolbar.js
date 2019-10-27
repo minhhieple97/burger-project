@@ -3,16 +3,16 @@ import classes from './toolbar.module.css';
 import Logo from '../../Logo/Logo';
 import NavigationItems from '../NavigationItems/NavigationItems';
 import DrawerToggle from '../SideDrawer/DrawerToggle/DrawerToggle';
-const toolbar = (props)=>(<header className={classes.Toolbar}> 
-    <DrawerToggle 
-     clicked={props.drawerToggleClicked} 
-    /> 
+const toolbar = (props) => (<header className={classes.Toolbar}>
+    <DrawerToggle
+        clicked={props.drawerToggleClicked}
+    />
     {/* Ở giao diện mobile (width<500px) thì DrwaerToggle mới hiển thị */}
     <div className={classes.Logo}>
-     <Logo />
+        <Logo />
     </div>
     <nav className={classes.DesktopOnly}>
-        <NavigationItems></NavigationItems>
+        <NavigationItems isAuthenticated={props.isAuth} />
     </nav>
 </header>)
 export default toolbar;

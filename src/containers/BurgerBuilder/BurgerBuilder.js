@@ -9,12 +9,6 @@ import axios from '../../axios-orders';
 import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../components/withErrorHandler/withErrorHandler';
-const INGREDIENTS_PRICE = {
-    salad: 0.5,
-    cheese: 0.4,
-    meat: 1.3,
-    bacon: 0.7
-}
 class BurgerBuilder extends Component {
     state = {
         purchasing: false,
@@ -41,7 +35,13 @@ class BurgerBuilder extends Component {
         this.updatePurchaseState(updateIngredients);
     };
     purchaseHander = () => {
-        this.setState({ purchasing: true });
+        if (this.props.isAuthenticated) {
+            this.setState({ purchasing: true });
+        }
+        else {
+            this.props.onSetAuthRedirectPath('/checkout');//Bất cứ khi nào người dùng xác thực thì điều này sẽ xảy ra
+            this.props.history.push('/auth');
+        }
     };
     purchaseCancelHander = () => {
         this.setState({ purchasing: false });
@@ -69,6 +69,7 @@ class BurgerBuilder extends Component {
                         price={this.props.totalPrice}
                         purchaseable={this.updatePurchaseState(this.props.ingredients)}
                         ordered={this.purchaseHander}
+                        isAuth={this.props.isAuthenticated}
                     />
                 </Aux>
             );
@@ -97,7 +98,8 @@ const mapStateToProps = (state) => {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
         error: state.burgerBuilder.error,
-        purchased: state.order.purchased
+        purchased: state.order.purchased,
+        isAuthenticated: state.auth.token !== null
     }
 };
 const mapDispatchToProps = (dispatch) => {
@@ -105,7 +107,8 @@ const mapDispatchToProps = (dispatch) => {
         onIngredientAdded: (ingName) => dispatch(actions.addIngredient(ingName)),
         onIngredientRemoved: (ingName) => dispatch(actions.removeIngredient(ingName)),
         onInitIngredients: () => dispatch(actions.initIngredient()),
-        onInitPurchase: () => dispatch(actions.purchaseInit())
+        onInitPurchase: () => dispatch(actions.purchaseInit()),
+        onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
     }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
