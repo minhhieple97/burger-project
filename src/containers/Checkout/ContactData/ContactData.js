@@ -6,7 +6,7 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../components/withErrorHandler/withErrorHandler';
 import * as  actions from '../../../store/actions';
-import { updateObject } from '../../../helper/utilly';
+import { updateObject,checkValidity } from '../../../helper/utilly';
 import { connect } from 'react-redux';
 class ContactData extends Component {
     state = {
@@ -112,7 +112,7 @@ class ContactData extends Component {
     inputChangedHandler = (event, inputIdentifier) => {
         const updateFormElement = updateObject(this.state.orderForm[inputIdentifier], {
             value: event.target.value,
-            valid: this.checkValidity(
+            valid: checkValidity(
                 event.target.value,
                 this.state.orderForm[inputIdentifier].validation
             ),
@@ -128,19 +128,6 @@ class ContactData extends Component {
             if (!formIsValid) break;
         }
         this.setState({ orderForm: updateOrderForm, formIsValid: formIsValid });
-    };
-    checkValidity(value, rules) {
-        let isValid = true;
-        if (rules.required) {
-            isValid = (value.trim() !== '') && isValid;
-        };
-        if (rules.minLength) {
-            isValid = (value.length >= rules.minLength) && isValid;
-        };
-        if (rules.maxLength) {
-            isValid = (value.length <= rules.maxLength) && isValid;
-        }
-        return isValid;
     };
     clickHandled = (e, formElement) => {
         const _orderForm = { ...this.state.orderForm };
