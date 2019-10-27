@@ -11,7 +11,6 @@ import Auth from './containers/Auth/Auth';
 import Logout from './containers/Auth/Logout/Logout';
 class App extends Component {
   componentDidMount() {
-    console.log('OK');
     this.props.onTryAutoSignup();
   }
 
@@ -27,10 +26,10 @@ class App extends Component {
       routes = (
         <Switch>
           <Route path="/" exact component={BurgerBuilder}></Route>
+          <Route path="/auth" component={Auth}  ></Route>
           <Route path="/checkout" component={Checkout}></Route>
           <Route path="/orders" component={Orders} ></Route>
           <Route path="/logout" component={Logout} />
-          <Redirect to="/" ></Redirect>
         </Switch>
       );
     }

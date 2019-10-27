@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
-import { updateObject } from '../utilly';
+import { updateObject } from '../../helper/utilly';
 const initialState = {
     token: null,
     userId: null,
@@ -11,6 +11,7 @@ const authStart = (state) => {
     return updateObject(state, { loading: true, error: true });
 };
 const authSuccess = (state, { payload }) => {
+    
     return updateObject(state, {
         token: payload.idToken,
         userId: payload.localId,

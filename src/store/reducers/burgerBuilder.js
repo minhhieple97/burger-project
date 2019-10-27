@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
-import { updateObject } from '../utilly';
+import { updateObject } from '../../helper/utilly';
 import { fetchOrdersFailed } from '../actions/order';
 const INGREDIENTS_PRICE = {
   salad: 0.5,
