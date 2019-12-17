@@ -16,7 +16,7 @@ class BurgerBuilder extends Component {
     };
     componentDidMount() {
         this.props.onInitIngredients();
-    }
+    };
     updatePurchaseState(ingredients) {
         const sum = Object.keys(ingredients).map((ing) => ingredients[ing]).reduce((total, item) => total += item, 0);// Calculate total purchase money
         return sum > 0 // check purchase 
@@ -35,12 +35,13 @@ class BurgerBuilder extends Component {
         this.updatePurchaseState(updateIngredients);
     };
     purchaseHander = () => {
-        if (this.props.isAuthenticated) {
+        const {isAuthenticated,onSetAuthRedirectPath,history} = this.props;
+        if (isAuthenticated) {
             this.setState({ purchasing: true });
         }
         else {
-            this.props.onSetAuthRedirectPath('/checkout');//Bất cứ khi nào người dùng xác thực thì điều này sẽ xảy ra
-            this.props.history.push('/auth');
+            onSetAuthRedirectPath('/checkout');//Bất cứ khi nào người dùng xác thực thì điều này sẽ xảy ra
+            history.push('/auth');
         }
     };
     purchaseCancelHander = () => {
@@ -51,38 +52,37 @@ class BurgerBuilder extends Component {
         this.props.history.push({ pathname: '/checkout' });
     };
     render() {
+        const {ingredients,error,totalPrice,isAuthenticated} = this.props;
         let orderSummary = null;
-        let burger = this.props.error ? `Ingredients can't loaded!` : <Spinner />
+        let burger = error ? `Ingredients can't loaded!` : <Spinner />
         const disabledInfo = {
-            ...this.props.ingredients
+            ...ingredients
         };
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0;
         };
-        if (this.props.ingredients) {
+        if (ingredients) {
             burger = (
                 <Aux>
-                    <Burger ingredients={this.props.ingredients} />
+                    <Burger ingredients={ingredients} />
                     <BuildControls
                         ingredientAdded={this.addIngredientHander} removeIngredientHander={this.removeIngredientHander}
                         disabled={disabledInfo}
-                        price={this.props.totalPrice}
-                        purchaseable={this.updatePurchaseState(this.props.ingredients)}
+                        price={totalPrice}
+                        purchaseable={this.updatePurchaseState(ingredients)}
                         ordered={this.purchaseHander}
-                        isAuth={this.props.isAuthenticated}
+                        isAuth={isAuthenticated}
                     />
                 </Aux>
             );
             orderSummary = <OrderSummary
-                ingredients={this.props.ingredients}
+                ingredients={ingredients}
                 purchaseCancel={this.purchaseCancelHander}
                 purchaseContinue={this.purchaseContinueHander}
-                totalPrice={this.props.totalPrice}
+                totalPrice={totalPrice}
             />
         };
-        if (this.state.loading) {
-            orderSummary = <Spinner />
-        }
+        if (this.state.loading) orderSummary = <Spinner />
         return (
             <Aux>
                 <Modal show={this.state.purchasing} clicked={this.purchaseCancelHander}>
@@ -94,12 +94,14 @@ class BurgerBuilder extends Component {
     };
 }
 const mapStateToProps = (state) => {
+    const {burgerBuilder,order,auth} = state;
     return {
-        ingredients: state.burgerBuilder.ingredients,
-        totalPrice: state.burgerBuilder.totalPrice,
-        error: state.burgerBuilder.error,
-        purchased: state.order.purchased,
-        isAuthenticated: state.auth.token !== null
+        ingredients: burgerBuilder.ingredients,
+        totalPrice: burgerBuilder.totalPrice,
+        price:burgerBuilder.price,
+        error: burgerBuilder.error,
+        purchased: order.purchased,
+        isAuthenticated: auth.token !== null
     }
 };
 const mapDispatchToProps = (dispatch) => {
@@ -111,4 +113,7 @@ const mapDispatchToProps = (dispatch) => {
         onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
     }
 };
+//mapDispatchToProps mặc định nhận dispatch làm tham số và trả về một object
+//các properties của object chính là các action-creator 
+//hàm connect eject object này vào trong component BurgerBuiler truyền như props.
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));

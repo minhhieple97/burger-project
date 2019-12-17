@@ -10,10 +10,6 @@ export class Logout extends Component {
         return <Redirect to='/' />
     }
 }
-
-const mapStateToProps = (state) => ({
-
-})
 const mapDispatchToProps = dispatch => {
     return {
         onLogout: () => dispatch(actions.logout())

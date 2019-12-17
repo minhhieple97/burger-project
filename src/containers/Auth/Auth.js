@@ -6,7 +6,7 @@ import classes from './auth.module.css';
 import * as actions from '../../store/actions';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import { connect } from 'react-redux';
-import { updateObject,checkValidity } from '../../helper/utilly';
+import { updateObject, checkValidity } from '../../helper/utilly';
 class Auth extends Component {
     state = {
         controls: {
@@ -62,21 +62,22 @@ class Auth extends Component {
         })
     };
     componentDidMount() {
-        if (!this.props.buildingBurger && (this.props.authenRedirectPath !== '/')) {
+        const { buildingBurger, authenRedirectPath, onSetAuthRedirectPath } = this.props;
+        if (!buildingBurger && (authenRedirectPath !== '/')) {//Nếu không ở trạng thái building và authenRedirect 
             console.log("Running here!");
-            this.props.onSetAuthRedirectPath();
+            onSetAuthRedirectPath('/');
         }
         //Chúng ta có một state dùng để xác định trạng thái người dùng có đang build một burger hay không ? nhằm giải quyết vấn đề khi mới vào trang chưa đăng nhập và build burger => chuyển sang trang auth để order => khi quay lại trang chủ thì ingredient bị mất =>để giải quyết thì sau khi nhận auth xong thì chuyển sang trang checkout luôn. mà không back lại BugerBuilder nữa.
     };
-
     render() {
+        const {controls,isSignup} = this.state;
+        const {error,isAuthenticated,authenRedirectPath,loading} = this.props;
         const formElementsArray = [];
-        for (let key in this.state.controls) {
-            formElementsArray.push({ id: key, config: this.state.controls[key] })
+        for (let key in controls) {
+            formElementsArray.push({ id: key, config: controls[key] })
         };
         const form = formElementsArray.map(formElement => (
             <Input
-                key={formElement.id}
                 key={formElement.id}
                 elementType={formElement.config.elementType}
                 elementConfig={formElement.config.elementConfig} value={formElement.config.value}
@@ -92,41 +93,42 @@ class Auth extends Component {
                 <Button btnType="Success">Submit</Button>
             </form>
         )
-        let error = null;
-        if (this.props.error) {
-            error = (
-                <p>{this.props.error.message}</p>
+        let errorContent = null;
+        if (error) {
+            errorContent = (
+                <p>{error.message}</p>
             )
         }
         let authRedirect = null;
-        if (this.props.isAuthenticated) {
-            authRedirect = <Redirect to={this.props.authenRedirectPath} />
+        if (isAuthenticated) {//Nếu đã đăng nhập rồi thì redirect đến trang chủ.
+            authRedirect = <Redirect to={authenRedirectPath} />
         }
-
-        if (this.props.loading) {
+        if (loading) {
             content = <Spinner />
         }
+        const button = <Button clicked={this.switchAuthModeHandler} btnType="Danger">SWITCH TO {isSignup ? 'SIGNIN' : 'SIGNUP'}</Button>
         return <div className={classes.Auth} >
-            {error}
+            {errorContent}
             {authRedirect}
             {content}
-            <Button clicked={this.switchAuthModeHandler} btnType="Danger">SWITCH TO {this.state.isSignup ? 'SIGNIN' : 'SIGNUP'}</Button>
+            {button}
         </div>
     };
 }
 const mapStateToProps = (state) => {
+    const { auth, burgerBuilder } = state;
     return {
-        loading: state.auth.loading,
-        error: state.auth.error,
-        isAuthenticated: state.auth.token !== null,
-        buildingBurger: state.burgerBuilder.building,
-        authenRedirectPath: state.auth.authRedirect
+        loading: auth.loading,
+        error: auth.error,
+        isAuthenticated: auth.token !== null,//xác định đăng nhập hay chưa 
+        buildingBurger: burgerBuilder.building,//xác định xem có đang ở trạng thái build-burger hay không
+        authenRedirectPath: auth.authRedirect//Đường dẫn cần redirect đến khi authen xong
     }
 }
 const mapDispathToProps = (dispatch) => {
     return {
         onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup)),
-        onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath('/'))
+        onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
     }
 }
 export default connect(mapStateToProps, mapDispathToProps)(Auth);

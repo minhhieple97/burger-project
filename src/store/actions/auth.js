@@ -5,7 +5,7 @@ export const authStart = () => {
     return {
         type: actionTypes.AUTH_START
     }
-};
+}
 export const checkAuthTimeout = (expirationTime) => {//Hàm kiểm tra thời gian đăng nhập cho phép
     return dispatch => {
         setTimeout(() => {
@@ -26,7 +26,7 @@ export const authSuccess = (authData) => {
         type: actionTypes.AUTH_SUCCESS,
         payload: authData
     }
-};
+}
 export const authFail = (error) => {
     return {
         type: actionTypes.AUTH_FAIL,
@@ -61,7 +61,7 @@ export const setAuthRedirectPath = (path) => {
         path
     }
 }
-export const authCheckState = () => {//Hàm kiểm tra xem đã thực hiện đăngn nhập hay chưa ?, lưu 
+export const authCheckState = () => {//Hàm kiểm tra xem đã thực hiện đăng nhập hay chưa ?, lưu 
     return dispatch => {
         const token = localStorage.getItem('token');//Kiểm tra token trong localStorage
         if (!token) {//Token không tồn tại thì call action logout

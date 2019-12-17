@@ -12,10 +12,10 @@ export const removeIngredient = (name) => {
         payload: name
     }
 }
-export const setIngredients = (ingredients) => {
+export const setIngredients = (ingredients,price) => {
     return {
         type: actionTypes.FETCH_INGREDIENT,
-        payload:ingredients
+        payload: {ingredients,price}
     }
 }
 export const initIngredientFailed = () => {
@@ -26,11 +26,11 @@ export const initIngredientFailed = () => {
 export const initIngredient = () => {
     return async (dispatch) => {
         try {
-            const response = await axios.get('https://burger-project-b6bde.firebaseio.com/ingredients.json');
-            const ingredients = response.data;
-            dispatch(setIngredients(ingredients));
+            const { data: ingredients } = await axios.get('https://burger-project-b6bde.firebaseio.com/ingredients.json');
+            const { data: price } = await axios.get('https://burger-project-b6bde.firebaseio.com/price.json');
+            dispatch(setIngredients(ingredients,price));
         } catch (error) {
-             dispatch(initIngredientFailed())
+            dispatch(initIngredientFailed())
         }
 
     }

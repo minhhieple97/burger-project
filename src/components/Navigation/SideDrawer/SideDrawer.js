@@ -6,9 +6,7 @@ import classes from './sideDrawer.module.css';
 import Aux from '../../../hoc/Wraper';
 const sideDrawer = (props) => {
     let attachedClasses = [classes.SideDrawer, classes.Close];
-    if (props.open) {
-        attachedClasses = [classes.SideDrawer, classes.Open];
-    }
+    if (props.open) attachedClasses = [classes.SideDrawer, classes.Open];
     return (
         <Aux>
             <Backdrop show={props.open} clicked={props.closed} />

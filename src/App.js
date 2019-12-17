@@ -1,23 +1,22 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import Layout from './containers/Layout/Layout';
 import { Route, Switch } from 'react-router-dom';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
-import Checkout from './containers/Checkout/Checkout';
-import { withRouter , Redirect } from 'react-router';
+import { withRouter, Redirect } from 'react-router';
 import * as actionTypes from '../src/store/actions';
 import { connect } from 'react-redux';
-import Orders from './containers/Orders/Orders';
-import Auth from './containers/Auth/Auth';
-import Logout from './containers/Auth/Logout/Logout';
+const Logout = React.lazy(() => import('./containers/Auth/Logout/Logout'));
+const Orders = React.lazy(() => import('./containers/Orders/Orders'));
+const Auth = React.lazy(() => import('./containers/Auth/Auth'));
+const Checkout = React.lazy(() => import('./containers/Checkout/Checkout'));
 class App extends Component {
   componentDidMount() {
-    this.props.onTryAutoSignup();
+    this.props.onTryAutoSignin();
   }
-
   render() {
     let routes = (
       <Switch>
-        <Route path="/auth" component={Auth}  ></Route>
+        <Route path="/auth" render={()=><Suspense fallback={<div>Loading...</div>} ><Auth/></Suspense>} ></Route>
         <Route path="/" exact component={BurgerBuilder} ></Route>
         <Redirect to="/" ></Redirect>
       </Switch>
@@ -26,10 +25,10 @@ class App extends Component {
       routes = (
         <Switch>
           <Route path="/" exact component={BurgerBuilder}></Route>
-          <Route path="/auth" component={Auth}  ></Route>
-          <Route path="/checkout" component={Checkout}></Route>
-          <Route path="/orders" component={Orders} ></Route>
-          <Route path="/logout" component={Logout} />
+          <Route path="/auth" render={()=><Suspense fallback={<div>Loading...</div>} ><Auth/></Suspense>}  ></Route>
+          <Route path="/checkout" render={() => <Suspense fallback={<div>Loading...</div>} ><Checkout /></Suspense>}></Route>
+          <Route path="/orders" render={() => <Suspense fallback={<div>Loading...</div>} ><Orders /></Suspense>} ></Route>
+          <Route path="/logout" render={() => <Suspense fallback={<div>Loading...</div>} ><Logout /></Suspense>} />
         </Switch>
       );
     }
@@ -37,7 +36,7 @@ class App extends Component {
       <div>
         <Layout>
           <Switch>
-           {routes}
+            {routes}
           </Switch>
         </Layout>
       </div>
@@ -46,7 +45,7 @@ class App extends Component {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    onTryAutoSignup: () => dispatch(actionTypes.authCheckState())
+    onTryAutoSignin: () => dispatch(actionTypes.authCheckState())
   }
 };
 const mapStateToProps = state => {

@@ -135,9 +135,10 @@ class ContactData extends Component {
         this.setState({ orderForm: _orderForm });
     }
     render() {
+        const {orderForm,formIsValid} = this.state;
         const formElementsArray = [];
-        for (let key in this.state.orderForm) {
-            formElementsArray.push({ id: key, config: this.state.orderForm[key] })
+        for (let key in orderForm) {
+            formElementsArray.push({ id: key, config: orderForm[key] })
         };
         let form = (
             <form onSubmit={this.orderHandler}>
@@ -154,7 +155,7 @@ class ContactData extends Component {
                     />
                 }
                 )}
-                <Button btnType="Success" disabled={!this.state.formIsValid} clicked={this.orderHandler.bind(this)} >Order</Button>
+                <Button btnType="Success" disabled={!formIsValid} clicked={this.orderHandler.bind(this)} >Order</Button>
             </form>
         );
         if (this.props.loading) {

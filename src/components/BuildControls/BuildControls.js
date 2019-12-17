@@ -8,17 +8,17 @@ const controls = [
   {label:'Meat',type:'meat'},
 ];
 const buildControls = (props)=>{
+  const {price,ingredientAdded,removeIngredientHander,disabled} = props
  return <div className={classes.BuildControls}>
-    <p>Current Price: <strong>{props.price.toFixed(2)}$</strong></p>
-  {controls.map(ctrl=>{
-      return <BuildControl 
+    <p>Current Price: <strong>{price.toFixed(2)}$</strong></p>
+  {controls.map(ctrl=><BuildControl 
       key={ctrl.label} 
       label={ctrl.label} 
-      added={props.ingredientAdded.bind(null,ctrl.type)} 
-      removed={props.removeIngredientHander.bind(null,ctrl.type)}
-      disabled={props.disabled[ctrl.type]}
-      ></BuildControl>
-  })}
+      added={ingredientAdded.bind(null,ctrl.type)} 
+      removed={removeIngredientHander.bind(null,ctrl.type)}
+      disabled={disabled[ctrl.type]}
+      />
+  )}
   <button 
   disabled={!props.purchaseable} 
   className={classes.OrderButton}
