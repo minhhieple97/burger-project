@@ -3,7 +3,6 @@ import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSumm
 import { connect } from 'react-redux';
 import ContactData from './ContactData/ContactData';
 import { Route, Redirect } from 'react-router-dom';
-import * as actions from '../../store/actions';
 class Checkout extends Component {
     checkoutCancelled = () => {
         this.props.history.goBack();
@@ -35,12 +34,6 @@ const mapStateToProps = (state) => {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
         purchased: state.order.purchased//purchased là state trong order để xác định xem user đã thanh toán hay chưa
-        //Khi 
     }
 };
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         onInitPurchase: () => dispatch(actions.purchaseInit())
-//     }
-// }
 export default connect(mapStateToProps)(Checkout);
