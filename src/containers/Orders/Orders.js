@@ -10,11 +10,15 @@ class Orders extends Component {
         this.props.onFetchOrders(this.props.token,this.props.userId);
     };
     render() {
-        let orders = <Spinner></Spinner>;
-        if (!this.props.loading) {
-            orders = this.props.orders.map(order => <Order key={order.id} ingredients={order.ingredients} price={+order.price} />)
+        const {orders,loading} = this.props;
+        let content = <Spinner></Spinner>;
+        if(orders.length<1){
+            return <h1 style={{textAlign:"center"}}>You have no orders!</h1>
         }
-        return (<div>{orders}</div>)
+        if (!loading) {
+            content = orders.map(order => <Order key={order.id} ingredients={order.ingredients} price={+order.price} />)
+        }
+        return (<div>{content}</div>)
     }
 }
 const mapStateToProps = (state) => {

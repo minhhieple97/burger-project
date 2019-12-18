@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from 'react';
+import React, { Suspense , useEffect } from 'react';
 import Layout from './containers/Layout/Layout';
 import { Route, Switch } from 'react-router-dom';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
@@ -9,11 +9,10 @@ const Logout = React.lazy(() => import('./containers/Auth/Logout/Logout'));
 const Orders = React.lazy(() => import('./containers/Orders/Orders'));
 const Auth = React.lazy(() => import('./containers/Auth/Auth'));
 const Checkout = React.lazy(() => import('./containers/Checkout/Checkout'));
-class App extends Component {
-  componentDidMount() {
-    this.props.onTryAutoSignin();
-  }
-  render() {
+const  app = (props)=> {
+    useEffect(()=>{
+      props.onTryAutoSignin();
+    },[ props.onTryAutoSignin])
     let routes = (
       <Switch>
         <Route path="/auth" render={()=><Suspense fallback={<div>Loading...</div>} ><Auth/></Suspense>} ></Route>
@@ -21,7 +20,7 @@ class App extends Component {
         <Redirect to="/" ></Redirect>
       </Switch>
     );
-    if (this.props.isAuthenticated) {
+    if (props.isAuthenticated) {
       routes = (
         <Switch>
           <Route path="/" exact component={BurgerBuilder}></Route>
@@ -41,7 +40,6 @@ class App extends Component {
         </Layout>
       </div>
     )
-  }
 }
 const mapDispatchToProps = dispatch => {
   return {
@@ -53,4 +51,4 @@ const mapStateToProps = state => {
     isAuthenticated: state.auth.token !== null
   }
 }
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(app));

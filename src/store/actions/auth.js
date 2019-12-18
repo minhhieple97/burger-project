@@ -1,4 +1,4 @@
-  import * as actionTypes from './actionTypes';
+import * as actionTypes from './actionTypes';
 import axios from 'axios';
 const TOKEN = `AIzaSyDU23a5ieqoH4XsUCHo_Yu2zmMIhttmuAg`;
 export const authStart = () => {
@@ -71,9 +71,9 @@ export const authCheckState = () => {//Hàm kiểm tra xem đã thực hiện đ
             if (timeExpiration > new Date()) {
                 const userId = localStorage.getItem('userId');
                 dispatch(authSuccess({
-                    idToken:token, localId:userId
+                    idToken: token, localId: userId
                 }));
-                dispatch(checkAuthTimeout((timeExpiration.getTime() - new Date().getTime())/1000))
+                dispatch(checkAuthTimeout((timeExpiration.getTime() - new Date().getTime()) / 1000))
 
             }
             else {

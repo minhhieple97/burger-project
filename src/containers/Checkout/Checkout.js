@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import { connect } from 'react-redux';
 import ContactData from './ContactData/ContactData';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect,withRouter } from 'react-router-dom';
 class Checkout extends Component {
     checkoutCancelled = () => {
         this.props.history.goBack();
@@ -36,4 +36,4 @@ const mapStateToProps = (state) => {
         purchased: state.order.purchased//purchased là state trong order để xác định xem user đã thanh toán hay chưa
     }
 };
-export default connect(mapStateToProps)(Checkout);
+export default connect(mapStateToProps)(withRouter(Checkout));
