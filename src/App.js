@@ -9,10 +9,11 @@ const Logout = React.lazy(() => import('./containers/Auth/Logout/Logout'));
 const Orders = React.lazy(() => import('./containers/Orders/Orders'));
 const Auth = React.lazy(() => import('./containers/Auth/Auth'));
 const Checkout = React.lazy(() => import('./containers/Checkout/Checkout'));
-const  app = (props)=> {
+const App = props=> {
+   const {onTryAutoSignin,isAuthenticated} = props;
     useEffect(()=>{
-      props.onTryAutoSignin();
-    },[ props.onTryAutoSignin])
+      onTryAutoSignin();
+    },[onTryAutoSignin])
     let routes = (
       <Switch>
         <Route path="/auth" render={()=><Suspense fallback={<div>Loading...</div>} ><Auth/></Suspense>} ></Route>
@@ -20,7 +21,7 @@ const  app = (props)=> {
         <Redirect to="/" ></Redirect>
       </Switch>
     );
-    if (props.isAuthenticated) {
+    if (isAuthenticated) {
       routes = (
         <Switch>
           <Route path="/" exact component={BurgerBuilder}></Route>
@@ -51,4 +52,4 @@ const mapStateToProps = state => {
     isAuthenticated: state.auth.token !== null
   }
 }
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(app));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

@@ -1,31 +1,30 @@
-import React, { Component } from 'react'
+import React from 'react'
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import { connect } from 'react-redux';
 import ContactData from './ContactData/ContactData';
-import { Route, Redirect,withRouter } from 'react-router-dom';
-class Checkout extends Component {
-    checkoutCancelled = () => {
-        this.props.history.goBack();
+import { Route, Redirect, withRouter } from 'react-router-dom';
+const Checkout = (props) => {
+    const { history,match,ingredients,purchased } = props
+    const checkoutCancelled = () => {
+        history.goBack();
     }
-    checkoutContinued = () => {
-        this.props.history.replace('/checkout/contact-data');
+    const checkoutContinued = () => {
+        props.history.replace('/checkout/contact-data');
     }
-    render() {
-        let summary = <Redirect to="/" />
-        if (this.props.ingredients) {
-            const purchasedRedirect = (this.props.purchased) ? (<Redirect to="/" />) : null//Khi trạng thái purchased là true thì redirect trang trang chủ  
-            // action PURCHASE_BURGER_SUCCESS được kích hoạt ở component ContactData sẽ set purchased = true. 
-            summary = (
-                <div>
-                    {purchasedRedirect}
-                    <CheckoutSummary
-                        ingredients={this.props.ingredients}
-                        checkoutContinued={this.checkoutContinued}
-                        checkoutCancelled={this.checkoutCancelled} />
-                    <Route path={this.props.match.path + '/contact-data'} component={ContactData} />
-                </div>
-            )
-        }
+    let summary = <Redirect to="/" />
+    if (ingredients) {
+        const purchasedRedirect = (purchased) ? (<Redirect to="/" />) : null//Khi trạng thái purchased là true thì redirect trang trang chủ  
+        // action PURCHASE_BURGER_SUCCESS được kích hoạt ở component ContactData sẽ set purchased = true. 
+        summary = (
+            <div>
+                {purchasedRedirect}
+                <CheckoutSummary
+                    ingredients={ingredients}
+                    checkoutContinued={checkoutContinued}
+                    checkoutCancelled={checkoutCancelled} />
+                <Route path={match.path + '/contact-data'} component={ContactData} />
+            </div>
+        )
         return summary
     }
 }
