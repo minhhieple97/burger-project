@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '../../../components/UI/Button/Button';
 import axios from '../../../axios-orders';
 import classes from './contactData.module.css';
