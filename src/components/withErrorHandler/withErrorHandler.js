@@ -3,30 +3,13 @@
 //Khi component được render trong lần đầu tiên thì nó sẽ gọi componentWillMount (không tính contructor) và chỉ được gọi duy nhất một lần , các lần sau khi component bị render lại thì componentWillUpdate sẽ được gọi đầu tiên. 
 //Vấn đề phát sinh khi tái sử dụng nhiều lần với withErrorHandler sẽ tạo ra càng này càng nhiều các interceptors (hiểu đơn giản nó như những middleware) gây lãng phí bộ nhớ memory-leak (bởi vì chúng ta khởi tạo các interceptors trong lifecycle componentWillMount)
 //=> Giải pháp mỗi khi component  unmount thì sẽ xóa interceptors  instanceAxios của componentChild của nó đi.
-import React, {useState, useEffect } from 'react';
+import React from 'react';
 import Modal from '../../components/UI/Modal/Modal';
 import Aux from '../../hoc/Wraper';
+import useHttpErrorHandler from '../../hooks/http-error-handler';
 export default function withErrorHandler(WrapperComponent, axios) {
     return props => {
-        const [error, setError] = useState(null);
-        const reqInterceptor = axios.interceptors.request.use(req => {
-            setError(null);
-            return req;
-        });
-        const resInterceptor = axios.interceptors.response.use(res => res, err => {
-            setError(err);
-        });
-        useEffect(() => {
-            return () => {
-                axios.interceptors.request.eject(reqInterceptor);//Hủy các interceptors này khi component bị unmount
-                axios.interceptors.response.eject(resInterceptor);
-            };
-        }, [reqInterceptor,resInterceptor])
-
-
-        const errorHandler = () => {
-            setError(null);
-        }
+      const [error,errorHandler] = useHttpErrorHandler(axios);  
         return (
             <Aux>
                 <Modal show={error} clicked={errorHandler}>{error ? error.message : ''}</Modal>

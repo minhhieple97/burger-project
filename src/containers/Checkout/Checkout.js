@@ -9,11 +9,11 @@ const Checkout = (props) => {
         history.goBack();
     }
     const checkoutContinued = () => {
-        props.history.replace('/checkout/contact-data');
+        history.replace('/checkout/contact-data');
     }
     let summary = <Redirect to="/" />
     if (ingredients) {
-        const purchasedRedirect = (purchased) ? (<Redirect to="/" />) : null//Khi trạng thái purchased là true thì redirect trang trang chủ  
+        const purchasedRedirect = purchased ? (<Redirect to="/" />) : null//Khi trạng thái purchased là true thì redirect trang trang chủ  
         // action PURCHASE_BURGER_SUCCESS được kích hoạt ở component ContactData sẽ set purchased = true. 
         summary = (
             <div>
@@ -21,8 +21,14 @@ const Checkout = (props) => {
                 <CheckoutSummary
                     ingredients={ingredients}
                     checkoutContinued={checkoutContinued}
-                    checkoutCancelled={checkoutCancelled} />
-                <Route path={match.path + '/contact-data'} component={ContactData} />
+                    checkoutCancelled={checkoutCancelled} 
+
+                    />
+                <Route 
+                path={match.path + '/contact-data'} 
+                component={ContactData} 
+
+                />
             </div>
         )
         return summary
