@@ -158,5 +158,5 @@ middleware(thunk) nằm giữa dispatch và reducers,
 + Có rất nhiều middleware có khả năng làm điều này nhưng redux-thunk có nhiều ưu việt nhất
 => Luật của redux
 + Action bắt buộc phải trả về một object (trong object bắt buộc phải có prop type có thể có hoặc không có props payload)
-=> Sự khác biệt lớn nhất nằm ở chỗ redux-thunk cho phép action trả về một hàm
+=> Sự khác biệt lớn nhất nằm ở chỗ redux-thunk cho phép ActionCreator trả về một hàm
 => Về cơ bản thì khi ứng dụng react khởi động nó sẽ gọi đến tất cả các reducers 1 lần.=> do vậy các reducers không được trả về giá trị undefined 

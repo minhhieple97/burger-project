@@ -43,7 +43,7 @@ export const auth = (email, password, isSignup) => {
                 url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${TOKEN}`
             }
             const response = await axios.post(url, authData);
-            const expiresIn = new Date(new Date().getTime() + response.data.expiresIn * 1000);
+            const expiresIn = Date.now() + response.data.expiresIn * 1000;
             localStorage.setItem('token', response.data.idToken);
             localStorage.setItem('userId', response.data.localId);
             localStorage.setItem('expiresIn', expiresIn);
@@ -67,17 +67,14 @@ export const authCheckState = () => {//Hàm kiểm tra xem đã thực hiện đ
         if (!token) {//Token không tồn tại thì call action logout
             dispatch(logout());
         } else {
-            const timeExpiration = new Date(localStorage.getItem('expiresIn'));//Lấy expiresIn trong localStorage
-            if (timeExpiration > new Date()) {
-                const userId = localStorage.getItem('userId');
-                dispatch(authSuccess({
-                    idToken: token, localId: userId
-                }));
-                dispatch(checkAuthTimeout((timeExpiration.getTime() - new Date().getTime()) / 1000))
-
+            const expirationTime = localStorage.getItem('expirationDate');
+            if ((expirationTime - Date.now()) < 0) {
+                dispatch(logout());
             }
             else {
-                dispatch(logout());
+                const userId = localStorage.getItem('userId');
+                dispatch(authSuccess({ idToken: token, localId: userId }));
+                dispatch(checkAuthTimeout((expirationTime - Date.now()) / 1000));
             }
         }
     }

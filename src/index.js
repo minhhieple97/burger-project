@@ -12,14 +12,14 @@ const composeEnhancers = process.env.NODE_ENV==='development' ? window.__REDUX_D
 const logger = store => {
   return next => {
     return action => {
-      console.log('[Middleware] Dispatching', action);
+      // console.log('[Middleware] Dispatching', action);
       const result = next(action);
-      console.log('[Middleware next state]',store.getState());
+      // console.log('[Middleware next state]',store.getState());
       return result;
     }
   }
 }
-const store = createStore(rootReducer,composeEnhancers(applyMiddleware(thunk,logger)));
+const store = createStore(rootReducer,composeEnhancers(applyMiddleware(logger,thunk)));
 ReactDOM.render(
   <Provider store={store}>
     <Router>
