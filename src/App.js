@@ -22,30 +22,25 @@ const App = props=> {
         <Redirect to="/" ></Redirect>
       </Switch>
     );
-    if (isAuthenticated) {
-      routes = (
-        <Switch>
+    if (isAuthenticated) routes =  <Switch>
           <Route path="/" exact component={BurgerBuilder}></Route>
           <Route path="/auth" render={()=><Suspense fallback={<Spinner/>} ><Auth/></Suspense>}  ></Route>
           <Route path="/checkout" render={() => <Suspense fallback={<Spinner/>} ><Checkout /></Suspense>}></Route>
           <Route path="/orders" render={() => <Suspense fallback={<Spinner/>} ><Orders /></Suspense>} ></Route>
           <Route path="/logout" render={() => <Suspense fallback={<Spinner/>} ><Logout /></Suspense>} />
-        </Switch>
-      );
-    }
-    return (
-      <div>
+        </Switch>;
+    return <div>
         <Layout>
           <Switch>
             {routes}
           </Switch>
         </Layout>
       </div>
-    )
+    
 }
 const mapDispatchToProps = dispatch => {
   return {
-    onTryAutoSignin: () => dispatch(actionTypes.authCheckState())
+    onTryAutoSignin: () => dispatch(actionTypes.authCheckLogin())
   }
 };
 const mapStateToProps = state => {

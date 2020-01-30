@@ -11,11 +11,9 @@ const Orders = (props) => {
         onFetchOrders(token,userId);
     },[token,userId,onFetchOrders])
     let content = <Spinner/>;
-    if (orders.length < 1) {
-        return <h1 style={{ textAlign: "center" }}>You have no orders!</h1>
-    }
     if (!loading) {
-        content = orders.map(order => <Order key={order.id} ingredients={order.ingredients} price={+order.price} />)
+         if (orders.length < 1) return <h1 style={{ textAlign: "center" }}>You have no orders!</h1>
+         content = orders.map(order => <Order key={order.id} ingredients={order.ingredients} price={+order.price} />)
     }
     return <div>{content}</div>
 }
