@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import * as actions from '../../../store/actions';
 const Logout = (props) => {
-    const {onLogout} = props;
+    const { onLogout } = props;
     useEffect(() => {
         onLogout();
     }, [onLogout])

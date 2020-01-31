@@ -1,13 +1,12 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
-const TOKEN = `AIzaSyDU23a5ieqoH4XsUCHo_Yu2zmMIhttmuAg`;
+import {TOKEN_FIREBASE} from '../../constants/config' ;
 export const authStart = () => {
     return {
         type: actionTypes.AUTH_START
     }
 }
 export const checkAuthTimeout = (expirationTime) => {//Hàm kiểm tra thời gian đăng nhập cho phép
-    console.log(expirationTime);
     return dispatch => {
         setTimeout(() => {
             dispatch(logout())
@@ -39,9 +38,9 @@ export const auth = (email, password, isSignup) => {
         try {
             dispatch(authStart());
             const authData = { email, password, returnSecureToken: true };
-            let url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${TOKEN}`;
+            let url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${TOKEN_FIREBASE}`;
             if (!isSignup) {
-                url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${TOKEN}`
+                url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${TOKEN_FIREBASE}`
             }
             const response = await axios.post(url, authData);
             const expiresIn = Date.now() + response.data.expiresIn * 1000 * 24 * 7;
@@ -51,7 +50,6 @@ export const auth = (email, password, isSignup) => {
             dispatch(authSuccess(response.data));
             dispatch(checkAuthTimeout(response.data.expiresIn*1000*24*7));
         } catch (error) {
-            console.log(error.message);
             dispatch(authFail(error.response.data.error));
         }
     }
