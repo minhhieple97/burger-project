@@ -6,7 +6,7 @@
     "@csstools/normalize.css": "github:csstools/normalize.css",
     "axios": "^0.19.2",
     "babel-loader": "^8.0.6",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
